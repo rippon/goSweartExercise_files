@@ -17,15 +17,21 @@ public class ControlPanel extends JPanel {
     private final int yMin = 0;
     private final int yMax = 5;
 
-    private final String[] instructionChoices;
-    private final String[] xPositionChoices;
-    private final String[] yPositionChoices;
-    private final String[] directionChoices;
+    private final int numberOf_sampleRoutes;
+    private final String[] instructions;
+    private final String[] xPositions;
+    private final String[] yPositions;
+    private final String[] directions;
+    private final String[][] sampleJourneys;
+    private final String[] sampleJourneysJComboBox_selectionStrings;
     private final JButton exitButton = new JButton("Exit");
     private final JComboBox instructionSelector;
     private final JComboBox orientationSelector;
     private final JComboBox xPositionSelector;
     private final JComboBox yPositionSelector;
+    
+    private final JComboBox sampleJourneySelector;
+    
     private String instructionString;
     private final JLabel instructionStringJLabel;
     private final Point position;
@@ -33,40 +39,61 @@ public class ControlPanel extends JPanel {
 
     public ControlPanel(MarsExploration mars) { //constructor
         this.mars = mars;
-        this.position = new Point(0, 0);
-        this.direction = 'N';
+        
+        numberOf_sampleRoutes = 5;
+        position = new Point(0, 0);
+        direction = 'N';
 
         this.instructionString = "";
-        this.instructionStringJLabel = new JLabel("instructionString = ");
+        instructionStringJLabel = new JLabel("instructionString = ");
 
-        this.instructionChoices = new String[4];
-        this.instructionChoices[0] = "select instruction from choices below";
-        this.instructionChoices[1] = 'L' + "    ( = turn left)";
-        this.instructionChoices[2] = 'R' + "    ( = turn right)";
-        this.instructionChoices[3] = 'M' + "    ( = move forward one unit)";
-        instructionSelector = new JComboBox(instructionChoices);
+        instructions = new String[4];
+        instructions[0] = "select instruction from choices below";
+        instructions[1] = 'L' + "    ( = turn left)";
+        instructions[2] = 'R' + "    ( = turn right)";
+        instructions[3] = 'M' + "    ( = move forward one unit)";
+        instructionSelector = new JComboBox(instructions);
+        
+        sampleJourneysJComboBox_selectionStrings = new String[numberOf_sampleRoutes + 1];
+        sampleJourneys = new String[numberOf_sampleRoutes + 1][2];
+        sampleJourneys[0][0] = "select ";
+        sampleJourneys[0][1] = "sample journey";
+        sampleJourneys[1][0] = "1 2 N";
+        sampleJourneys[1][1] = "LMLMLMLMM";
+        sampleJourneys[2][0] = "3 3 E";
+        sampleJourneys[2][1] = "MMRMMRMRRM";
+        sampleJourneys[3][0] = "0 5 S";
+        sampleJourneys[3][1] = "MLMMMRMLMRM";
+        sampleJourneys[4][0] = "2 2 W";
+        sampleJourneys[4][1] = "MR";
+        sampleJourneysJComboBox_selectionStrings[0] = sampleJourneys[0][0] + " " + sampleJourneys[0][1];
+        for (int i=1; i < numberOf_sampleRoutes; i++){
+            sampleJourneysJComboBox_selectionStrings[i] = "start configuration: " + sampleJourneys[i][0] + "     \n" +
+                                                        "route: " + sampleJourneys[i][1];
+        }
+        sampleJourneySelector = new JComboBox(sampleJourneysJComboBox_selectionStrings);
+        
+        directions = new String[5];
+        directions[0] = "select orientation from choices below";
+        directions[1] = 'N' + "    ( = heading North)";
+        directions[2] = 'E' + "    ( = heading East)";
+        directions[3] = 'S' + "    ( = heading South)";
+        directions[4] = 'W' + "    ( = heading West)";
+        orientationSelector = new JComboBox(directions);
 
-        this.directionChoices = new String[5];
-        this.directionChoices[0] = "select orientation from choices below";
-        this.directionChoices[1] = 'N' + "    ( = North orientation)";
-        this.directionChoices[2] = 'E' + "    ( = East orientation)";
-        this.directionChoices[3] = 'S' + "    ( = South orientation)";
-        this.directionChoices[4] = 'W' + "    ( = West orientation)";
-        orientationSelector = new JComboBox(directionChoices);
-
-        this.xPositionChoices = new String[xMax + 2];
-        this.xPositionChoices[0] = "select xPosition from choices below";
+        xPositions = new String[xMax + 2];
+        xPositions[0] = "select xPosition from choices below";
         for (int i = 1; i < (xMax + 2); i++) {
-            xPositionChoices[i] = (i - 1) + "    ( = xPosition)";
+            xPositions[i] = (i - 1) + "    ( = xPosition)";
         }
-        xPositionSelector = new JComboBox(xPositionChoices);
+        xPositionSelector = new JComboBox(xPositions);
 
-        this.yPositionChoices = new String[yMax + 2];
-        this.yPositionChoices[0] = "select yPosition from choices below";
+        this.yPositions = new String[yMax + 2];
+        this.yPositions[0] = "select yPosition from choices below";
         for (int i = 1; i < (yMax + 2); i++) {
-            yPositionChoices[i] = (i - 1) + "    ( = yPosition)";
+            yPositions[i] = (i - 1) + "    ( = yPosition)";
         }
-        yPositionSelector = new JComboBox(yPositionChoices);
+        yPositionSelector = new JComboBox(yPositions);
         setupUI();
     }
 
@@ -79,11 +106,44 @@ public class ControlPanel extends JPanel {
         this.add(yPositionSelector);
         this.add(orientationSelector);
         this.add(instructionSelector);
+        this.add(sampleJourneySelector);
+        
+        xPositionSelector.setEnabled(false);
+        yPositionSelector.setEnabled(false);
+        orientationSelector.setEnabled(false);
+        instructionSelector.setEnabled(false);
+        
         xPositionSelector.addActionListener(new xPositionSelectorActionWatcher());
         yPositionSelector.addActionListener(new yPositionSelectorActionWatcher());
         orientationSelector.addActionListener(new directionSelectorActionWatcher());
         instructionSelector.addActionListener(new InstructionSelectorActionWatcher());
-        this.add(instructionStringJLabel);
+        sampleJourneySelector.addActionListener(new sampleRouteSelectorActionWatcher());
+//        this.add(instructionStringJLabel);
+    }
+        
+
+    private class sampleRouteSelectorActionWatcher implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String resultsMessage;
+            JComboBox cb = (JComboBox) e.getSource();
+            String selection = (String) cb.getSelectedItem();
+            for (int i = 1; i < sampleJourneys.length; i++) {
+                if (selection.equals(sampleJourneysJComboBox_selectionStrings[i])) {
+//                    JOptionPane.showMessageDialog(null,
+//                            "You chose: \n" + sampleJourneysJComboBox_selectionStrings[i]);
+                    Rover rover = new Rover("rover", sampleJourneys[i][0], sampleJourneys[i][1]);
+                    resultsMessage = "start \n";
+                    resultsMessage += rover.statusMessage();
+                    resultsMessage += "\n";
+                    rover.executeInstructions();
+                    resultsMessage += "end \n";
+                    resultsMessage += rover.statusMessage();
+                    resultsMessage += "\n";
+                    JOptionPane.showMessageDialog(null, resultsMessage);
+                }
+            }
+        }
     }
 
     private class xPositionSelectorActionWatcher implements ActionListener {
@@ -92,7 +152,7 @@ public class ControlPanel extends JPanel {
             JComboBox cb = (JComboBox) e.getSource();
             String selection = (String) cb.getSelectedItem();
             for (int i = 1; i < (xMax + 2); i++) {
-                if (selection.equals(xPositionChoices[i])) {
+                if (selection.equals(xPositions[i])) {
                     position.setLocation(i - 1, (int) position.getY());
                 }
             }
@@ -108,7 +168,7 @@ public class ControlPanel extends JPanel {
             JComboBox cb = (JComboBox) e.getSource();
             String selection = (String) cb.getSelectedItem();
             for (int i = 1; i < (yMax + 2); i++) {
-                if (selection.equals(yPositionChoices[i])) {
+                if (selection.equals(yPositions[i])) {
                     position.setLocation((int) position.getX(), i - 1);
                 }
             }
@@ -120,21 +180,21 @@ public class ControlPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             JComboBox cb = (JComboBox) e.getSource();
             String selection = (String) cb.getSelectedItem();
-            if (selection.equals(directionChoices[0])) {
+            if (selection.equals(directions[0])) {
             }
-            if (selection.equals(directionChoices[1])) { // North
+            if (selection.equals(directions[1])) { // North
                 direction = 'N';
             }
-            if (selection.equals(directionChoices[2])) { // East
+            if (selection.equals(directions[2])) { // East
                 direction = 'E';
             }
-            if (selection.equals(directionChoices[3])) { // South
+            if (selection.equals(directions[3])) { // South
                 direction = 'S';
             }
-            if (selection.equals(directionChoices[4])) { // West
+            if (selection.equals(directions[4])) { // West
                 direction = 'W';
             }
-                JOptionPane.showMessageDialog(null, "direction = " + direction);
+//                JOptionPane.showMessageDialog(null, "direction = " + direction);
         }
     }
 
@@ -143,18 +203,18 @@ public class ControlPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             JComboBox cb = (JComboBox) e.getSource();
             String selection = (String) cb.getSelectedItem();
-            if (selection.equals(instructionChoices[0])) {
-//                JOptionPane.showMessageDialog(null, "you chose: " + instructionChoices[0]);
+            if (selection.equals(instructions[0])) {
+//                JOptionPane.showMessageDialog(null, "you chose: " + instructions[0]);
             }
-            if (selection.equals(instructionChoices[1])) { // turn left
+            if (selection.equals(instructions[1])) { // turn left
                 instructionString += "L";
                 mars.getDisplayPanel().getJourneyStringLabel().setText(mars.getDisplayPanel().getJourneyStringLabel().getText() + "L");
             }
-            if (selection.equals(instructionChoices[2])) { // turn right
+            if (selection.equals(instructions[2])) { // turn right
                 instructionString += "R";
                 mars.getDisplayPanel().getJourneyStringLabel().setText(mars.getDisplayPanel().getJourneyStringLabel().getText() + "R");
             }
-            if (selection.equals(instructionChoices[3])) { // move forward one unit
+            if (selection.equals(instructions[3])) { // move forward one unit
                 instructionString += "M";
                 mars.getDisplayPanel().getJourneyStringLabel().setText(mars.getDisplayPanel().getJourneyStringLabel().getText() + "M");
             }

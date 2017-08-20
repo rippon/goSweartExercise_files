@@ -10,12 +10,12 @@ import javax.swing.*;
 
 public class DisplayPanel extends JPanel {
 
-    private MarsExploration mars;
-    private JLabel xPositionInfoLabel;
-    private JLabel yPositionInfoLabel;
-    private JLabel directionInfoLabel;
-    private JLabel journeyStringLabel;
-    private JLabel activityReportingLabel;
+    private final MarsExploration mars;
+    private final JLabel xPositionInfoLabel;
+    private final JLabel yPositionInfoLabel;
+    private final JLabel directionInfoLabel;
+    private final JLabel journeyStringLabel;
+    private final JLabel activityReportingLabel;
 
     DisplayPanel(MarsExploration mars) {
         super();
@@ -30,11 +30,11 @@ public class DisplayPanel extends JPanel {
 
     private void initialise() {
         setLayout(new GridLayout(10, 1));
-        add(xPositionInfoLabel);
-        add(yPositionInfoLabel);
-        add(directionInfoLabel);
+//        add(xPositionInfoLabel);
+//        add(yPositionInfoLabel);
+//        add(directionInfoLabel);
         add(journeyStringLabel);
-        add(activityReportingLabel);
+//        add(activityReportingLabel);
     }
 
     @Override

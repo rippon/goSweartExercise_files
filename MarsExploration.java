@@ -25,7 +25,7 @@ public class MarsExploration extends JFrame {
     }
 
     private void initialise() {
-        this.setSize((int) (screenSize.width * 0.75), (int) (screenSize.height * 0.67));
+        this.setSize((int) (screenSize.width * 0.65), (int) (screenSize.height * 0.67));
         this.setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(1, 2));

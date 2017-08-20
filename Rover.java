@@ -13,15 +13,33 @@ import java.awt.Point;
  */
 // names could be: huey, dewey, louis, gooey
 public class Rover {
+    private final String name;
     private Point position;
     private char heading;
+    private final String instructions;
 
-    public Rover(String startConfiguration, String instructions) {
+    //constructor
+    public Rover(String name, String startConfiguration, String instructions){
+        this.name = name;
+        this.instructions = instructions;
+
+        this.position = new Point();
+        int x, y;
+        char c;
+
+        if (startConfigurationString_formatGood()) {
+            c = startConfiguration.charAt(0);
+            x = Character.getNumericValue(c);
+            c = startConfiguration.charAt(2);
+            y = Character.getNumericValue(c);
+            this.position.setLocation(new Point(x, y));
+            this.heading = startConfiguration.charAt(4);
+        }
     }
 
-    public void doInstructions(String instructions) {
-        for (int i = 0; i < instructions.length(); i++) {
-            char c = instructions.charAt(i);
+    public void executeInstructions() {
+        for (int i = 0; i < this.instructions.length(); i++) {
+            char c = this.instructions.charAt(i);
             switch (c) {
                 case 'L':
                     turnLeft();
@@ -94,10 +112,21 @@ public class Rover {
                 break;
         }
     }
-    
-    public void setHeading(char toThis){ heading = toThis; }
-    public char getHeading(){ return heading; }
-    public void setPosition(Point toThis){ position = toThis; }
-    public Point getPosition(){ return position; }
+
+    public String statusMessage() {
+        String message;
+
+        message = this.name + "'s position is:   ("
+                + (int) this.position.getX() + ", " + (int) this.position.getY() + ") \n";
+        message += this.name + "'s heading is:  " + this.heading + "\n";
+        return message;
+    }
+    private void doNothing(){ }
+    private boolean startConfigurationString_formatGood(){ return true; }
+    public void setHeading(char toThis){ this.heading = toThis; }
+    public char getHeading(){ return this.heading; }
+    public void setPosition(Point toThis){ this.position = toThis; }
+    public Point getPosition(){ return this.position; }
+    public String getName(){ return this.name; }
 
 }
